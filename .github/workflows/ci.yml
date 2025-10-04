@@ -48,21 +48,47 @@ jobs:
           echo "VERSION=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2)" >> $GITHUB_OUTPUT
           echo "COMMIT_MSG=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
-      - name: Rename APK with app name
-        run: |
-          APP_NAME="${{ env.APP_NAME }}"
-          # Copy and rename the APK
-          cp build/app/outputs/flutter-apk/app-release.apk "${APP_NAME}.apk"
-          ls -lh "${APP_NAME}.apk"
-
       - name: Send APK to Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          curl -F chat_id="${TELEGRAM_CHAT_ID}" \
-               -F document=@"build/app/outputs/flutter-apk/app-release.apk" \
-               https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument
+          APP_NAME: ${{ env.APP_NAME }}
+          FILE="${APP_NAME}.apk"
+          
+          if [ ! -f "$FILE" ]; then
+            echo "❌ File '$FILE' does not exist!"
+            exit 1
+          fi
+          
+          echo "✅ Sending $FILE to Telegram..."
+          
+          RESPONSE=$(curl -F chat_id="${TELEGRAM_CHAT_ID}" \
+                        -F document=@"${FILE}" \
+                        https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument)
+          
+          if echo "$RESPONSE" | grep -q '"ok":true'; then
+            echo "✅ Successfully sent APK to Telegram!"
+          else
+            echo "❌ Failed to send to Telegram: $RESPONSE"
+            exit 1
+          fi
+
+#      - name: Rename APK with app name
+#        run: |
+#          APP_NAME="${{ env.APP_NAME }}"
+#          # Copy and rename the APK
+#          cp build/app/outputs/flutter-apk/app-release.apk "${APP_NAME}.apk"
+#          ls -lh "${APP_NAME}.apk"
+#
+#      - name: Send APK to Telegram
+#        env:
+#          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+#        run: |
+#          curl -F chat_id="${TELEGRAM_CHAT_ID}" \
+#               -F document=@"build/app/outputs/flutter-apk/app-release.apk" \
+#               https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument
 
 
   build-web:

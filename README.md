@@ -300,3 +300,14 @@ on:
   push:
     branches: [ main ]
 ```
+
+---
+
+## 📚 Additional Resources
+
+- [Flutter Documentation](https://docs.flutter.dev/)
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Telegram Bot API](https://core.telegram.org/bots/api)
+- [Flutter CI/CD Best Practices](https://docs.flutter.dev/deployment/cd)
+
+---

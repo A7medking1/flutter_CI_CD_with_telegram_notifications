@@ -110,9 +110,11 @@ jobs:
           fi
 
           echo "✅ Sending Web build to Telegram..."
+          APP_NAME="${{ env.APP_NAME }}"
+          FILE="${APP_NAME}-web.zip"
 
           RESPONSE=$(curl -F chat_id="${TELEGRAM_CHAT_ID}" \
-               -F document=@"web-build.zip" \
+               -F document=@"${FILE}" \
                https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument)
 
           if echo "$RESPONSE" | grep -q '"ok":true'; then

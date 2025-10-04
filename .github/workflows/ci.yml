@@ -1,0 +1,65 @@
+name: Flutter CI/CD with Telegram
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17.0.10'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.1'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Get version info
+        id: version
+        run: |
+          echo "VERSION=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2)" >> $GITHUB_OUTPUT
+          echo "COMMIT_MSG=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+
+      - name: Send APK to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -F chat_id="${TELEGRAM_CHAT_ID}" \
+               -F document=@"build/app/outputs/flutter-apk/app-release.apk" \
+               -F caption="🚀 New Build Available!%0AVersion: ${{ steps.version.outputs.VERSION }}%0ACommit: ${{ steps.version.outputs.COMMIT_MSG }}%0ABranch: ${GITHUB_REF##*/}" \
+               https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument
+
+      - name: Send notification
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            STATUS="✅ Success"
+          else
+            STATUS="❌ Failed"
+          fi
+          
+          curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
+               -d chat_id="${TELEGRAM_CHAT_ID}" \
+               -d text="${STATUS}%0A%0AWorkflow: ${{ github.workflow }}%0ARepository: ${{ github.repository }}%0ABranch: ${GITHUB_REF##*/}%0ACommit: ${{ github.sha }}%0A%0A${{ steps.version.outputs.COMMIT_MSG }}"

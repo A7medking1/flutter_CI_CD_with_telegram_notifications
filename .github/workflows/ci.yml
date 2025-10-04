@@ -92,22 +92,6 @@ jobs:
             exit 1
           fi
 
-#      - name: Rename APK with app name
-#        run: |
-#          APP_NAME="${{ env.APP_NAME }}"
-#          # Copy and rename the APK
-#          cp build/app/outputs/flutter-apk/app-release.apk "${APP_NAME}.apk"
-#          ls -lh "${APP_NAME}.apk"
-#
-#      - name: Send APK to Telegram
-#        env:
-#          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-#          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-#        run: |
-#          curl -F chat_id="${TELEGRAM_CHAT_ID}" \
-#               -F document=@"build/app/outputs/flutter-apk/app-release.apk" \
-#               https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument
-
 
   build-web:
     name: Build Web App
@@ -168,6 +152,7 @@ jobs:
             exit 1
           fi
 
+
   build-windows:
     name: Build Windows App
     runs-on: windows-latest
@@ -223,8 +208,12 @@ jobs:
 
           echo "✅ Sending Windows build to Telegram..."
 
+          APP_NAME="${{ env.APP_NAME }}"
+          FILE="${APP_NAME}-windows.zip"
+
+
           RESPONSE=$(curl -F chat_id="${TELEGRAM_CHAT_ID}" \
-               -F document=@"windows-build.zip" \
+               -F document=@"${FILE}" \
                https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument)
 
           if echo "$RESPONSE" | grep -q '"ok":true'; then

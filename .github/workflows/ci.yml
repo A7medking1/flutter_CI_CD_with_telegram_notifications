@@ -341,7 +341,6 @@ jobs:
 
           RESPONSE=$(curl -F chat_id="${TELEGRAM_CHAT_ID}" \
                -F document=@"${APP_NAME}-installer-${VERSION}.exe" \
-               -F caption="💿 Windows Installer (Inno Setup)%0AApp: ${APP_NAME}%0AVersion: ${VERSION}%0ACommit: ${{ steps.version.outputs.COMMIT_MSG }}%0ABranch: ${GITHUB_REF##*/}%0A%0A✨ Professional installer with:%0A• Desktop shortcut option%0A• Start menu integration%0A• Uninstaller%0A• Auto-update ready" \
                https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument)
 
           if echo "$RESPONSE" | grep -q '"ok":true'; then

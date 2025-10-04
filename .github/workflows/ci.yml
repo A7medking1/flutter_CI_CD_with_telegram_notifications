@@ -250,9 +250,8 @@ jobs:
         run: |
           echo "VERSION=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2)" >> $GITHUB_OUTPUT
           echo "COMMIT_MSG=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
-          # Extract app name from pubspec.yaml
-          APP_NAME= "${{ env.APP_NAME }}"
-          echo "APP_NAME=${APP_NAME}" >> $GITHUB_OUTPUT
+         
+          APP_NAME="${{ env.APP_NAME }}"
           # Get just version number (without build number)
           VERSION_NUMBER=$(echo $(grep 'version:' pubspec.yaml | cut -d ' ' -f 2) | cut -d '+' -f 1)
           echo "VERSION_NUMBER=${VERSION_NUMBER}" >> $GITHUB_OUTPUT

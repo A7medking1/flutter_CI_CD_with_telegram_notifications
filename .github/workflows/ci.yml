@@ -48,6 +48,24 @@ jobs:
           echo "VERSION=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2)" >> $GITHUB_OUTPUT
           echo "COMMIT_MSG=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
+      - name: Rename APK with app name
+        run: |
+          APP_NAME="${{ env.APP_NAME }}"
+          APK_SOURCE="build/app/outputs/flutter-apk/app-release.apk"
+          APK_TARGET="${APP_NAME}.apk"
+          
+          echo "Copying $APK_SOURCE → $APK_TARGET"
+          cp "$APK_SOURCE" "$APK_TARGET"
+          
+          echo "✅ File list after renaming:"
+          ls -lh .
+          
+          if [ ! -f "$APK_TARGET" ]; then
+            echo "❌ Failed to rename APK. File not found: $APK_TARGET"
+            exit 1
+          fi
+
+
       - name: Send APK to Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

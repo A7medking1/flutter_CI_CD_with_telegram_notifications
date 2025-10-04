@@ -50,7 +50,7 @@ jobs:
 
       - name: Rename APK with app name
         run: |
-          APP_NAME="${{ steps.version.outputs.APP_NAME }}"
+          APP_NAME="${{ env.APP_NAME }}"
           # Copy and rename the APK
           cp build/app/outputs/flutter-apk/app-release.apk "${APP_NAME}.apk"
           ls -lh "${APP_NAME}.apk"
@@ -93,7 +93,7 @@ jobs:
 
       - name: Archive Web Build with app name
         run: |
-          APP_NAME="${{ steps.version.outputs.APP_NAME }}"
+          APP_NAME="${{ env.APP_NAME }}"
           cd build/web
           zip -r "../../${APP_NAME}-web.zip" .
           cd ../..
@@ -159,7 +159,7 @@ jobs:
       - name: Archive Windows Build with app name
         shell: powershell
         run: |
-          $APP_NAME = "${{ steps.version.outputs.APP_NAME }}"
+          $APP_NAME = "${{ env.APP_NAME }}"
           $OUTPUT_FILE = "${APP_NAME}-windows.zip"
           Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath $OUTPUT_FILE
           Get-Item $OUTPUT_FILE | Select-Object Name, Length
@@ -216,7 +216,7 @@ jobs:
           echo "VERSION=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2)" >> $GITHUB_OUTPUT
           echo "COMMIT_MSG=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
           # Extract app name from pubspec.yaml
-          APP_NAME=$(grep '^name:' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
+          APP_NAME= "${{ env.APP_NAME }}"
           echo "APP_NAME=${APP_NAME}" >> $GITHUB_OUTPUT
           # Get just version number (without build number)
           VERSION_NUMBER=$(echo $(grep 'version:' pubspec.yaml | cut -d ' ' -f 2) | cut -d '+' -f 1)
@@ -227,7 +227,7 @@ jobs:
       - name: Create Inno Setup Script
         shell: powershell
         run: |
-          $APP_NAME = "${{ steps.version.outputs.APP_NAME }}"
+          $APP_NAME = "${{ env.APP_NAME }}"
           $VERSION = "${{ steps.version.outputs.VERSION_NUMBER }}"
           
           # Get the executable name (usually app name with .exe)
@@ -326,7 +326,7 @@ jobs:
       - name: Rename Installer
         shell: powershell
         run: |
-          $APP_NAME = "${{ steps.version.outputs.APP_NAME }}"
+          $APP_NAME = "${{ env.APP_NAME }}"
           
           # Find the generated installer
           $Installer = Get-ChildItem -Path "installer_output" -Filter "*.exe" | Select-Object -First 1
@@ -352,7 +352,7 @@ jobs:
             exit 0
           fi
 
-          APP_NAME="${{ steps.version.outputs.APP_NAME }}"
+          APP_NAME="${{ env.APP_NAME }}"
 
           echo "✅ Sending Windows Installer to Telegram..."
 

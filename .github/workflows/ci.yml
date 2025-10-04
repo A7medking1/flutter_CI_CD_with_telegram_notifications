@@ -53,7 +53,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          APP_NAME: ${{ env.APP_NAME }}
+          APP_NAME="${{ env.APP_NAME }}"
           FILE="${APP_NAME}.apk"
           
           if [ ! -f "$FILE" ]; then

@@ -48,20 +48,20 @@ jobs:
                -F document=@"build/app/outputs/flutter-apk/app-release.apk" \
                https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument
 
-      - name: Send notification
-        if: always()
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            STATUS="✅ Success"
-          else
-            STATUS="❌ Failed"
-          fi
-          
-          curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
-               -d chat_id="${TELEGRAM_CHAT_ID}" \
+#      - name: Send notification
+#        if: always()
+#        env:
+#          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+#        run: |
+#          if [ "${{ job.status }}" == "success" ]; then
+#            STATUS="✅ Success"
+#          else
+#            STATUS="❌ Failed"
+#          fi
+#
+#          curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
+#               -d chat_id="${TELEGRAM_CHAT_ID}" \
 
 
   build-web:
@@ -119,21 +119,21 @@ jobs:
             echo "❌ Failed to send to Telegram: $RESPONSE"
             exit 1
           fi
-      - name: Send notification
-        if: always()
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            STATUS="✅ Success"
-          else
-            STATUS="❌ Failed"
-          fi
-          
-          curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
-               -d chat_id="${TELEGRAM_CHAT_ID}" \
-  
+#      - name: Send notification
+#        if: always()
+#        env:
+#          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+#        run: |
+#          if [ "${{ job.status }}" == "success" ]; then
+#            STATUS="✅ Success"
+#          else
+#            STATUS="❌ Failed"
+#          fi
+#
+#          curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
+#               -d chat_id="${TELEGRAM_CHAT_ID}" \
+#
 
   #
   build-windows:
@@ -199,18 +199,18 @@ jobs:
             echo "❌ Failed to send to Telegram: $RESPONSE"
             exit 1
           fi
-      - name: Send notification
-        if: always()
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          if [ "${{ job.status }}" == "success" ]; then
-            STATUS="✅ Success"
-          else
-            STATUS="❌ Failed"
-          fi
-          
-          curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
-               -d chat_id="${TELEGRAM_CHAT_ID}" \
-
+#      - name: Send notification
+#        if: always()
+#        env:
+#          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+#        run: |
+#          if [ "${{ job.status }}" == "success" ]; then
+#            STATUS="✅ Success"
+#          else
+#            STATUS="❌ Failed"
+#          fi
+#
+#          curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \
+#               -d chat_id="${TELEGRAM_CHAT_ID}" \
+#
